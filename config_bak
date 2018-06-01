@@ -1,0 +1,163 @@
+## Robot module configurations : general handling of movement G-codes and slicing into moves
+default_feed_rate                            8000             # Default rate ( mm/minute ) for G1/G2/G3 moves
+default_seek_rate                            8000             # Default rate ( mm/minute ) for G0 moves
+mm_per_arc_segment                           0.5              # Arcs are cut into segments ( lines ), this is the length for
+                                                              # these segments.  Smaller values mean more resolution,
+                                                              # higher values mean faster computation
+
+# Arm solution configuration : Cartesian robot. Translates mm positions into stepper positions
+alpha_steps_per_mm                           158.2            # Steps per mm for alpha stepper
+beta_steps_per_mm                            158.2            # Steps per mm for beta stepper
+
+# Planner module configuration : Look-ahead and acceleration configuration
+planner_queue_size                           8               # DO NOT CHANGE THIS <- Fuck that. I changed it anyways.  \(^_^)/
+acceleration                                 300              # Acceleration in mm/second/second.
+
+acceleration_ticks_per_second                1000              # Number of times per second the speed is updated
+junction_deviation                           0.05             # Similar to the old "max_jerk", in millimeters,
+                                                              # see https://github.com/grbl/grbl/blob/master/planner.c
+                                                              # and https://github.com/grbl/grbl/wiki/Configuring-Grbl-v0.8
+                                                              # Lower values mean being more careful, higher values means being
+                                                              # faster and have more jerk
+
+# Stepper module configuration
+microseconds_per_step_pulse                  1                # Duration of step pulses to stepper drivers, in microseconds
+base_stepping_frequency                      100000           # Base frequency for stepping
+
+# Cartesian axis speed limits
+x_axis_max_speed                             30000            # mm/min
+y_axis_max_speed                             30000            # mm/min
+
+# Stepper module pins ( ports, and pin numbers, appending "!" to the number will invert a pin )
+alpha_step_pin                               2.8              # Pin for alpha stepper step signal
+alpha_dir_pin                                2.13!            # Pin for alpha stepper direction
+alpha_en_pin                                 4.29             # Pin for alpha enable pin
+alpha_current                                1.2              # X stepper motor current
+alpha_max_rate                               10000.0          # mm/min
+
+beta_step_pin                                2.3              # Pin for beta stepper step signal
+beta_dir_pin                                 0.22             # Pin for beta stepper direction
+beta_en_pin                                  0.21             # Pin for beta enable
+beta_current                                 1.2              # Y stepper motor current
+beta_max_rate                                10000.0          # mm/min
+
+## System configuration
+uart0.baud_rate                              115200           # Baud rate for the default hardware serial port
+second_usb_serial_enable                     false            # This enables a second usb serial port (to have both pronterface
+                                                              # and a terminal connected)
+#leds_disable                                true             # disable using leds after config loaded
+#play_led_disable                            true             # disable the play led
+
+#pause_led_pin                                1.30
+#play_led_pin                                 0.5
+
+# Kill button (used to be called pause) maybe assigned to a different pin, set to the onboard pin by default
+#kill_button_enable                           true            # set to true to enable a kill button
+#kill_button_pin                              1.28
+#lid_switch_pin                               1.29^
+#unkill_button_pin                            4.28^
+
+#msd_disable                                 false            # disable the MSD (USB SDCARD) when set to true (needs special binary)
+#dfu_enable                                  false            # for linux developers, set to true to enable DFU
+#watchdog_timeout                            10               # watchdog timeout in seconds, default is 10, set to 0 to disable the watchdog
+
+# Only needed on a smoothieboard
+currentcontrol_module_enable                 true
+
+## Extruder module configuration
+extruder.hotend.enable                       false
+extruder.hotend2.enable                      false
+
+## Laser module configuration
+laser_module_enable                          true
+laser_module_pin                             1.23
+laser_module_ttl_pin                         !1.22
+laser_module_maximum_power                   0.4
+laser_module_minimum_power                   0.0
+laser_module_pwm_period                      25
+
+## Temperature control configuration
+# First hotend configuration
+temperature_control.hotend.enable            false            # Whether to activate this ( "hotend" ) module at all.
+temperature_control.hotend2.enable           false            # Whether to activate this ( "hotend" ) module at all.
+temperature_control.bed.enable               false            #
+
+## Switch module for fan control
+switch.fan.enable                            false            #
+switch.fan.input_on_command                  M106             #
+switch.fan.input_off_command                 M107             #
+switch.fan.output_pin                        nc               #
+switch.fan.output_type                       pwm              # pwm output settable with S parameter in the input_on_comand
+#switch.fan.max_pwm                           255             # set max pwm for the pin default is 255
+
+#switch.misc.enable                           false           #
+#switch.misc.input_on_command                 M42             #
+#switch.misc.input_off_command                M43             #
+#switch.misc.output_pin                       nc              #
+#switch.misc.output_type                      digital         # just an on or off pin
+
+# Switch module for spindle control
+switch.spindle.enable                        false            #
+
+
+## Endstops
+endstops_enable                              true             # the endstop module is enabled by default and can be disabled here
+alpha_min_endstop                            1.24^            # add a ! to invert if endstop is NO connected to ground
+alpha_max_endstop                            nc               # NOTE set to nc if this is not installed
+alpha_homing_direction                       home_to_min      # or set to home_to_max and set alpha_max
+alpha_min                                    -13                # this gets loaded after homing when home_to_min is set
+alpha_max                                    400              # this gets loaded after homing when home_to_max is set
+#alpha_soft_max                               400              # Tkkrlab firmware only: software endstop
+beta_min_endstop                             1.25^            #
+beta_max_endstop                             nc               #
+beta_homing_direction                        home_to_min      #
+beta_min                                     -3                #
+beta_max                                     300              #
+#beta_soft_max                                300              # Tkkrlab firmware only: software endstop
+
+# optional order in which axis will home, default is they all home at the same time,
+# if this is set it will force each axis to home one at a time in the specified order
+#homing_order                                XYZ              # x axis followed by y then z last
+#move_to_origin_after_home                   false            # move XY to 0,0 after homing
+
+# optional enable limit switches, actions will stop if any enabled limit switch is triggered
+alpha_limit_enable                           true             # set to true to enable X min and max limit switches
+beta_limit_enable                            true             # set to true to enable Y min and max limit switches
+
+alpha_fast_homing_rate_mm_s                  50               # feedrates in mm/second
+beta_fast_homing_rate_mm_s                   50               # "
+gamma_fast_homing_rate_mm_s                  4                # "
+alpha_slow_homing_rate_mm_s                  25               # "
+beta_slow_homing_rate_mm_s                   25               # "
+gamma_slow_homing_rate_mm_s                  2                # "
+
+alpha_homing_retract_mm                      13                # distance in mm
+beta_homing_retract_mm                       3                # "
+gamma_homing_retract_mm                      1                # "
+
+#endstop_debounce_count                      100              # uncomment if you get noise on your endstops, default is 100
+
+## Z-probe
+zprobe.enable                                false
+
+## Panel
+panel.enable                                 true
+panel.lcd                                    reprap_discount_glcd
+panel.spi_channel                            0
+panel.spi_cs_pin                             0.16
+panel.encoder_a_pin                          nc
+panel.encoder_b_pin                          nc
+panel.click_button_pin                       nc
+panel.buzz_pin                               nc
+panel.back_button_pin                        nc
+panel.up_button_pin                          nc
+panel.down_button_pin                        nc
+
+panel.alpha_jog_feedrate                     6000              # x jogging feedrate in mm/min
+panel.beta_jog_feedrate                      6000              # y jogging feedrate in mm/min
+panel.gamma_jog_feedrate                     200               # z jogging feedrate in mm/min
+
+network.enable                               true            # enable the ethernet network services
+network.webserver.enable                     true           # enable the webserver
+network.telnet.enable                        true             # enable the telnet server
+network.ip_address                           auto             # use dhcp to get ip address
